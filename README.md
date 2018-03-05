@@ -1,28 +1,26 @@
 # Project 3
 
-In this project, we practiced two major skills:
-
-- Collecting data by scraping a website;
-- Building a binary predictor.
-
 ## Problem Statement
 
-What characteristics of a post on Reddit contribute most to the overall interaction (as measured by number of comments)?
+Determine which characteristics of a post on Reddit contribute most to the overall interaction as measured by number of comments.
 
-## Outline of the project
 
-### Scraping 
+## Preamble
 
-We scraped the 'hot' threads as listed on the [Reddit homepage](https://www.reddit.com/) and acquired the following pieces of information about each thread:
-1. The title of the thread
-2. The subreddit that the thread corresponds to
-3. The length of time it has been up on Reddit
-4. The number of comments on the thread
+In this project, we practiced some essential skills:
 
-### Building a classification model using NLP
+- Collecting data by scraping a website using the Python package `requests` and using the Python library `BeautifulSoup` which efficiently extracts HTML code. We scraped the 'hot' threads as listed on the [Reddit homepage](https://www.reddit.com/) (see figure below) and acquired the following pieces of information about each thread:
 
-Using Natural Language Processing and any other relevant features, we build a model that predicts whether or not a given Reddit post will have above or below the _median_ number of comments.
+   - The title of the thread
+   - subreddit that the thread corresponds to
+   - The length of time it has been up on Reddit
+   - The number of comments on the thread
 
-### Building extra models
+- Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." These techniques include:
 
-We create a logistic regression, GridSearch Ridge and Lasso for this model and report the best hyperparameter values.
+    - Tokenization (splitting text into pieces based on given patterns)
+    - Removing stopwords 
+    - Stemming (returns the base form of the word)
+    - Lemmatization (return the word's *lemma*)
+
+- After the step above we obtain *numerical* features which allow for algebraic computations. We then build a `RandomForestClassifier` and use it to classify each post according to the corresponding number of comments associated with it. More concretely the model predicts whether or not a given Reddit post will have above or below the _median_ number of comments.
