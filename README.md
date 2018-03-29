@@ -161,4 +161,17 @@ def rfscore(df,target_col,test_size,n_estimators,max_depth):
     print(feature_importances.plot(kind="barh", figsize=(6,6)))
     return 
 ```
+We then use the function below that performs cross-validation, to obtain our accuracy score (using the model with best parameters obtained from the `GridSearch`):
+
+```
+def cv_score(X,y,cv,n_estimators,max_depth):
+    rf = RandomForestClassifier(n_estimators=n_estimators_best,
+                                max_depth=max_depth_best)
+    s = cross_val_score(rf, X, y, cv=cv, n_jobs=-1)
+    return("{} Score is :{:0.3} ± {:0.3}".format("Random Forest", s.mean().round(3), s.std().round(3)))
+```
+
+
+
+
 
