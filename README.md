@@ -99,11 +99,7 @@ comparing the values with their median
 
 ```
 df['binary'] = df['nums'].apply(lambda x: 1 if x >= np.median(df['nums']) else 0)
-df.shape
-df.head()
 df_subred = pd.concat([df['binary'],pd.get_dummies(df['subreddits'], drop_first = True)], axis = 1)
-df_subred.shape
-df_subred.head()
 ```
 
 To preprocess the text before creating numerical features from the text (see below) we build the following `cleaner` function:
@@ -122,18 +118,19 @@ def cleaner(text):
     return ' '.join(final_text)
 ```
 
-I then use `CountVectorizer` to create features based on the words in the thread titles. We will then combine this new table with the subreddits features table and build a new model.
+I then use `CountVectorizer` to create features based on the words in the thread titles. We will then combine this new table `df_all` and the subreddits features table and build a new model.
 
 ```
 cvt = CountVectorizer(min_df=min_df, preprocessor=cleaner)
 cvt.fit(df["titles"])
-print('Words that showed up at least {} times:\n'.format(min_df))
-print(cvt.get_feature_names(),'\n')
-print('There are {} such words'.format(len(cvt.get_feature_names())))
+cvt.transform(df['titles']).todense()
+X_title = cvt.fit_transform(df["titles"])
+X_thread = pd.DataFrame(X_title.todense(), 
+                        columns=cvt.get_feature_names())
+df_all = pd.concat([df_subred,X_thread],axis=1)                     
 ```
 
-
-Finally, with the data properly treated, we use the following function to fit the training data using a `RandomForestClassifier` with optimized hyperparameters obtained using `GridSearchCV`:
+Finally, now with the data properly treated, we use the following function to fit the training data using a `RandomForestClassifier` with optimized hyperparameters obtained using `GridSearchCV`:
 
 ```
 n_estimators = list(range(20,220,10))
