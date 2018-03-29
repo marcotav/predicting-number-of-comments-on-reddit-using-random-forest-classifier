@@ -173,7 +173,7 @@ def cv_score(X,y,cv,n_estimators,max_depth):
 
 <br>
 
-       <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditRF.png" width="400">
+   <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditRF.png" width="400">
 
 
 
