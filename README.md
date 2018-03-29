@@ -1,4 +1,4 @@
-# Project 3
+# Predicting Comment on Reddit <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/Reddit-logo.png" width="40">
 
 ## Problem Statement
 
