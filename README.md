@@ -4,7 +4,6 @@
 
 Determine which characteristics of a post on Reddit contribute most to the overall interaction as measured by number of comments.
 
-
 ## Preamble
 
 In this project, we practiced some essential skills:
@@ -172,7 +171,9 @@ def cv_score(X,y,cv,n_estimators,max_depth):
     return("{} Score is :{:0.3} ± {:0.3}".format("Random Forest", s.mean().round(3), s.std().round(3)))
 ```
 
+<br>
 
+       <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditRF.png" width="400">
 
 
 
