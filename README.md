@@ -133,6 +133,10 @@ X_thread = pd.DataFrame(X_title.todense(),
 df_all = pd.concat([df_subred,X_thread],axis=1)                     
 ```
 
+<img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditwordshist.png" width="400">
+
+
+
 Finally, now with the data properly treated, we use the following function to fit the training data using a `RandomForestClassifier` with optimized hyperparameters obtained using `GridSearchCV`:
 
 ```
