@@ -16,10 +16,8 @@ In this project, we practiced some essential skills:
    - The length of time it has been up on Reddit
    - The number of comments on the thread
   
-  
-  
-  
-   
+  <br>
+ 
    <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditpage.png" width="800">
    
 - Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." These techniques include:
