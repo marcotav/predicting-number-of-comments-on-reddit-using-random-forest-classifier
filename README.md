@@ -16,6 +16,15 @@ In this project, we practiced some essential skills:
    - The length of time it has been up on Reddit
    - The number of comments on the thread
    
+- Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." These techniques include:
+
+   - Tokenization (splitting text into pieces based on given patterns)
+   - Removing stopwords 
+   - Stemming (returns the base form of the word)
+   - Lemmatization (return the word's *lemma*)
+   
+- After the step above we obtain *numerical* features which allow for algebraic computations. We then build a `RandomForestClassifier` and use it to classify each post according to the corresponding number of comments associated with it. More concretely the model predicts whether or not a given Reddit post will have above or below the _median_ number of comments.
+    
 ### Writing functions to extract the items above
 
 The functions below will extract the information we need:
@@ -81,28 +90,25 @@ def get_urls(n=25):
     return titles, times, subreddits, nums, URLS
  ```
 
-We then build a `DataFrame`, perform some EDA and create a binary column that classifies the number of comments
-comparing the values with their median:
+We then build a `DataFrame`, perform some EDA and create:
+
+- a binary column that classifies the number of comments
+comparing the values with their median
+- A set of dummy columns for the subreddits
+- Concatenate both
 
 ```
 df['binary'] = df['nums'].apply(lambda x: 1 if x >= np.median(df['nums']) else 0)
 df.shape
 df.head()
+df_subred = pd.concat([df['binary'],pd.get_dummies(df['subreddits'], drop_first = True)], axis = 1)
+df_subred.shape
+df_subred.head()
 ```
 
-Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." These techniques include:
-
-    - Tokenization (splitting text into pieces based on given patterns)
-    - Removing stopwords 
-    - Stemming (returns the base form of the word)
-    - Lemmatization (return the word's *lemma*)
-    
-    
-To preprocess the text we use:
+To preprocess the text before creating numerical features from the text (see below) we build the following `cleaner` function:
 
 ```
-import string
-
 def cleaner(text):
     stemmer = PorterStemmer()                                          
     stop = stopwords.words('english')    
@@ -118,9 +124,7 @@ def cleaner(text):
 
 I then use `CountVectorizer` to create features based on the words in the thread titles. We will then combine this new table with the subreddits features table and build a new model.
 
-
 ```
-min_df = 1 # Set to 1 to get more data points
 cvt = CountVectorizer(min_df=min_df, preprocessor=cleaner)
 cvt.fit(df["titles"])
 print('Words that showed up at least {} times:\n'.format(min_df))
@@ -129,16 +133,13 @@ print('There are {} such words'.format(len(cvt.get_feature_names())))
 ```
 
 
-- After the step above we obtain *numerical* features which allow for algebraic computations. We then build a `RandomForestClassifier` and use it to classify each post according to the corresponding number of comments associated with it. More concretely the model predicts whether or not a given Reddit post will have above or below the _median_ number of comments.
-
-The following function fits the data with using a `RandomForestClassifier` with optimized hyperparameters obtained
-using `GridSearchCV`:
+Finally, with the data properly treated, we use the following function to fit the training data using a `RandomForestClassifier` with optimized hyperparameters obtained using `GridSearchCV`:
 
 ```
 n_estimators = list(range(20,220,10))
 max_depth = list(range(2, 22, 2)) + [None]
 
-def rfscore2(df,target_col,test_size,n_estimators,max_depth):
+def rfscore(df,target_col,test_size,n_estimators,max_depth):
     
     X = df.drop(target_col, axis=1)   # predictors
     y = df[target_col]                # target
@@ -150,10 +151,10 @@ def rfscore2(df,target_col,test_size,n_estimators,max_depth):
              'max_depth':max_depth}   # parameters for grid search
     rf_gs = GridSearchCV(RandomForestClassifier(), rf_params, cv=5, verbose=1, n_jobs=-1)
     rf_gs.fit(X_train,y_train) # training the random forest with all possible parameters
-    max_depth_best = rf_gs.best_params_['max_depth']      # getting the best max_depth
-    n_estimators_best = rf_gs.best_params_['n_estimators']  # getting the best n_estimators
-    best_rf_gs = RandomForestClassifier(max_depth=max_depth_best,n_estimators=n_estimators_best) # instantiate the best model
-    best_rf_gs.fit(X_train,y_train)  # fitting the best model
+    max_depth_best = rf_gs.best_params_['max_depth']      
+    n_estimators_best = rf_gs.best_params_['n_estimators'] 
+    best_rf_gs = RandomForestClassifier(max_depth=max_depth_best,n_estimators=n_estimators_best) 
+    best_rf_gs.fit(X_train,y_train)  
     best_rf_score = best_rf_gs.score(X_test,y_test) 
     preds = best_rf_gs.predict(X_test)
     feature_importances = pd.Series(best_rf_gs.feature_importances_, index=X.columns).sort_values().tail(5)
