@@ -1,7 +1,7 @@
 <img align="right" width="120" height="120"
      title="Size Limit logo" src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/Reddit-logo.png">
 
-# Predicting Comment on Reddit 
+# Predicting Comments on Reddit 
 
 <br>
 
