@@ -1,4 +1,9 @@
-# Predicting Comment on Reddit <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/Reddit-logo.png" width="40">
+<img align="right" width="120" height="120"
+     title="Size Limit logo" src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/Reddit-logo.png">
+
+# Predicting Comment on Reddit 
+
+<br>
 
 ## Problem Statement
 
