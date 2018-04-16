@@ -16,9 +16,10 @@
 <p align="center">
   <a href="#ps"> Problem Statement </a> •
   <a href="#steps"> Steps </a> •
-  <a href="#over"> Overview and Data </a> •
-  <a href="#orgdata"> Preprocessing the data </a> •
-  <a href="#Small datasets"> Problems with small datasets </a> •
+  <a href="#webscraping"> Bird's-eye view of webscraping  </a> •
+  <a href="#writingfunctions"> Writing functions to extract data from Reddit </a> •
+  <a href="#nlp"> Quick review of NLP techniques </a> •
+  <a href="#preprocess"> Preprocessing the text </a> •
   <a href="#InceptionV3"> Creating and training using the InceptionV3 model </a> •
   <a href="#trainfully"> Training the fully-connected network</a> •
   <a href="#plots"> Plotting the accuracy and loss histories </a> •
@@ -35,7 +36,7 @@ Determine which characteristics of a post on Reddit contribute most to the overa
 ## Steps
 
 This project had three steps:
-- Collecting data by scraping a website using the Python package `requests` and using the Python library `BeautifulSoup` which efficiently extracts HTML code. We scraped the 'hot' threads as listed on the [Reddit homepage](https://www.reddit.com/) (see figure below) and acquired the following pieces of information about each thread:
+- Collecting data by scraping a website using the Python package `requests` and using the Python library `BeautifulSoup` which efficiently extracts HTML code. We scraped the 'hot' threads as listed on the <br> [Reddit homepage](https://www.reddit.com/) (see figure below) and acquired the following pieces of information about each thread:
 
    - The title of the thread
    - The subreddit that the thread corresponds to
@@ -50,20 +51,40 @@ This project had three steps:
 </p>
 <br>
 
-   
-- Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." These techniques include:
+- Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." NLP techniques include:
 
-   - Tokenization (splitting text into pieces based on given patterns)
-   - Removing stopwords 
-   - Stemming (returns the base form of the word)
-   - Lemmatization (return the word's *lemma*)
-   
+   - Tokenization: essentially splitting text into pieces based on given patterns
+   - Removing stopwords  
+   - Lemmatization: returns the word's *lemma* (its base/dictionary form)
+   - Stemming: returns the base form of the word (it is usually cruder than lemmatization).
+
 - After the step above we obtain *numerical* features which allow for algebraic computations. We then build a `RandomForestClassifier` and use it to classify each post according to the corresponding number of comments associated with it. More concretely the model predicts whether or not a given Reddit post will have above or below the _median_ number of comments.
-    
-### Writing functions to extract the items above
 
-The functions below will extract the information we need:
+<a id = 'webscraping'></a>  
+### Bird's-eye view of webscraping 
 
+The general strategy is:
+- Use the `requests` Python packages to make a `.get` request (the object `res` is a `Response` object):   
+```
+res = requests.get(URL,headers={"user-agent":'mt'})
+```     
+- Create a BeautifulSoup object from the HTML
+```
+soup = BeautifulSoup(res.content,"lxml")
+```
+- Use `.extract` to see the page structure:
+```
+soup.extract
+```
+<a id = 'writingfunctions'></a>  
+### Writing functions to extract data from Reddit
+Here I write down the the functions that will extract the information needed. The structure of the functions depends on the HTML code of the page. The page has the following structure:
+- The thread title is within an `<a>` tag with the attribute `data-event-action="title"`.
+- The time since the thread was created is within a `<time>` tag with attribute `class="live-timestamp"`.
+- The subreddit is within an `<a>` tag with the attribute `class="subreddit hover may-blank"`.
+- The number of comments is within an `<a>` tag with the attribute `data-event-action="comments"`.
+
+The functions are:
 ```
 def extract_title_from_result(result,num=25):
     titles = []
@@ -93,9 +114,7 @@ def extract_num_from_result(result,num=25):
         nums_lst.append(i.string)
     return nums_lst
 ```
-
- We then write a function that finds the last `id` on the page, and stores it:
- 
+ I then write a function that finds the last `id` on the page, and stores it:
  ```
 def get_urls(n=25):
     j=0   # counting loops
@@ -125,20 +144,39 @@ def get_urls(n=25):
     return titles, times, subreddits, nums, URLS
  ```
 
-We then build a `DataFrame`, perform some EDA and create:
-
-- a binary column that classifies the number of comments
-comparing the values with their median
+I then build a pandas `DataFrame`, perform some exploratory data analysis and create:
+- A binary column that classifies the number of comments comparing the values with their median
 - A set of dummy columns for the subreddits
 - Concatenate both
 
 ```
 df['binary'] = df['nums'].apply(lambda x: 1 if x >= np.median(df['nums']) else 0)
+# dummies created and dataframes concatenated
 df_subred = pd.concat([df['binary'],pd.get_dummies(df['subreddits'], drop_first = True)], axis = 1)
 ```
-
-To preprocess the text before creating numerical features from the text (see below) we build the following `cleaner` function:
-
+<a id = 'nlp'></a>  
+### Quick review of NLP techniques
+Before applying NLP to our problem, I will provide a quick review of the basic procedures using `Python`. We use the package `nltk` (Natural Language Toolkit) to perform the actions above. The general procedure is the following. We first import `nltk` and the necessary classes for lemmatization and stemming
+```
+import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.stem.porter import PorterStemmer
+```
+We then create objects of the classes `PorterStemmer` and `WordNetLemmatizer`: 
+```
+stemmer = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
+```
+To use lemmatization and/or stemming in a given string `text` we must first tokenize it. To do that, we use `RegexpTokenizer` where the argument below is a regular expression. 
+```
+tokenizer = RegexpTokenizer(r'\w+')
+tokens = tokenizer.tokenize(text)
+tokens_lemma = [lemmatizer.lemmatize(i) for i in tokens]
+stem_text = [PorterStemmer().stem(i) for i in tokens]
+```
+<a id = 'preprocess'></a>  
+### Preprocessing the text
+To preprocess the text, before creating numerical features from it, I used the following `cleaner` function:
 ```
 def cleaner(text):
     stemmer = PorterStemmer()                                          
@@ -152,7 +190,6 @@ def cleaner(text):
             final_text.append(stemmer.stem(w.strip()))
     return ' '.join(final_text)
 ```
-
 I then use `CountVectorizer` to create features based on the words in the thread titles. We will then combine this new table `df_all` and the subreddits features table and build a new model.
 
 ```
