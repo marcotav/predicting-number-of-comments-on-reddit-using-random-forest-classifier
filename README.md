@@ -213,12 +213,15 @@ The following function does the following:
 - Defines target and predictors
 - Performs a train-test split of the data
 - Uses `GridSearchCV` which performs an "exhaustive search over specified parameter values for an estimator" (see the docs). It searches the hyperparameter space to find the highest cross validation score. It has several important arguments namely:
+
 | Argument | Description |
 | --- | ---|
 | **`estimator`** | Sklearn instance of the model to fit on |
 | **`param_grid`** | A dictionary where keys are hyperparameters and values are lists of values to test |
 | **`cv`** | Number of internal cross-validation folds to run for each set of hyperparameters |
+
 - After fitting, `GridSearchCV` provides information such as:
+
 | Property | Use |
 | --- | ---|
 | **`results.param_grid`** | Parameters searched over. |
@@ -226,11 +229,13 @@ The following function does the following:
 | **`results.best_estimator_`** | Reference to model with best score. |
 | **`results.best_params_`** | Parameters found to perform with the best score. |
 | **`results.grid_scores_`** | Display score attributes with corresponding parameters. | 
+
 - The estimator chosen here was a `RandomForestClassifier`. The latter fits a set of decision tree classifiers on sub-samples of the data, averaging to improve the accuracy and avoid over-fitting. 
 - Fits several models using the training data, for all parameters within the parameter grid `rf_params` and find the best model i.e. the model with best mean cross-validated score.
 - Instantiates the best model and fits it
 - Scores the model and makes predictions
 - Determines the most relevant features and prints out a bar plot showing them.
+
 ```
 def rfscore(df,target_col,test_size,n_estimators,max_depth):
     
@@ -272,7 +277,7 @@ def rfscore(df,target_col,test_size,n_estimators,max_depth):
     print(feature_importances.plot(kind="barh", figsize=(6,6)))
     return 
 ```
-We then use the function below that performs cross-validation, to obtain our accuracy score (using the model with best parameters obtained from the `GridSearch`):
+The function below that performs cross-validation, to obtain the accuracy score for the model with best parameters obtained from the `GridSearch`:
 
 ```
 def cv_score(X,y,cv,n_estimators,max_depth):
@@ -281,10 +286,8 @@ def cv_score(X,y,cv,n_estimators,max_depth):
     s = cross_val_score(rf, X, y, cv=cv, n_jobs=-1)
     return("{} Score is :{:0.3} ± {:0.3}".format("Random Forest", s.mean().round(3), s.std().round(3)))
 ```
-
+The most important features according to the `RandomForestClassifier` are shown in the graph below:
 <br>
 
    <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditRF.png" width="400">
-
-
 
