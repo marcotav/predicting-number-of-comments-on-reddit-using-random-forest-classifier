@@ -2,7 +2,8 @@
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-![Image title](https://img.shields.io/badge/reddit--predictor-v1.0-blue.svg) ![image title](https://img.shields.io/badge/python-v3.6-green.svg) ![image title](https://img.shields.io/badge/ntlk-v3.2.5-yellow.svg) ![Image title](https://img.shields.io/badge/sklearn-0.19.1-orange.svg)
+![Image title](https://img.shields.io/badge/reddit--predictor-v1.0-blue.svg) ![image title](https://img.shields.io/badge/python-v3.6-green.svg) ![image title](https://img.shields.io/badge/ntlk-v3.2.5-yellow.svg) ![Image title](https://img.shields.io/badge/sklearn-0.19.1-orange.svg) ![Image title](https://img.shields.io/badge/BeautifulSoup-4.6.0-blue.svg)
+
 
 <br>
 <br>
@@ -14,7 +15,7 @@
 
 <p align="center">
   <a href="#ps"> Problem Statement </a> •
-  <a href="#chal"> Challenges and Applications </a> •
+  <a href="#steps"> Steps </a> •
   <a href="#over"> Overview and Data </a> •
   <a href="#orgdata"> Preprocessing the data </a> •
   <a href="#Small datasets"> Problems with small datasets </a> •
@@ -30,20 +31,25 @@
 
 Determine which characteristics of a post on Reddit contribute most to the overall interaction as measured by number of comments.
 
-## Preamble
+<a id = 'steps'></a>
+## Steps
 
-In this project, we practiced some essential skills:
-
+This project had three steps:
 - Collecting data by scraping a website using the Python package `requests` and using the Python library `BeautifulSoup` which efficiently extracts HTML code. We scraped the 'hot' threads as listed on the [Reddit homepage](https://www.reddit.com/) (see figure below) and acquired the following pieces of information about each thread:
 
    - The title of the thread
-   - subreddit that the thread corresponds to
+   - The subreddit that the thread corresponds to
    - The length of time it has been up on Reddit
    - The number of comments on the thread
   
   <br>
- 
-   <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditpage.png" width="800">
+<br>
+<p align="center">
+  <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditpage.png" 
+       width="750">
+</p>
+<br>
+
    
 - Using Natural Language Processing (NLP) techniques to preprocess the data. NLP, in a nutshell, is "how to transform text data and convert it to features that enable us to build models." These techniques include:
 
