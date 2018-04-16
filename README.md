@@ -20,11 +20,7 @@
   <a href="#writingfunctions"> Writing functions to extract data from Reddit </a> •
   <a href="#nlp"> Quick review of NLP techniques </a> •
   <a href="#preprocess"> Preprocessing the text </a> •
-  <a href="#InceptionV3"> Creating and training using the InceptionV3 model </a> •
-  <a href="#trainfully"> Training the fully-connected network</a> •
-  <a href="#plots"> Plotting the accuracy and loss histories </a> •
-  <a href="#Conclusions">Conclusions</a> •
-  <a href="#td">To Dos</a> 
+  <a href="#models">Models </a> 
 </p>
 
 <a id = 'ps'></a>
@@ -190,7 +186,7 @@ def cleaner(text):
             final_text.append(stemmer.stem(w.strip()))
     return ' '.join(final_text)
 ```
-I then use `CountVectorizer` to create features based on the words in the thread titles. We will then combine this new table `df_all` and the subreddits features table and build a new model.
+I then use `CountVectorizer` to create features based on the words in the thread titles. `CountVectorizer` is scikit-learn's bag of words tool. I then combine this new table `df_all` and the subreddits features table and build a model.
 
 ```
 cvt = CountVectorizer(min_df=min_df, preprocessor=cleaner)
@@ -205,13 +201,26 @@ df_all = pd.concat([df_subred,X_thread],axis=1)
 <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/redditwordshist.png" width="400">
 
 
-
-Finally, now with the data properly treated, we use the following function to fit the training data using a `RandomForestClassifier` with optimized hyperparameters obtained using `GridSearchCV`:
-
+<a id = 'models'></a>  
+### Models
+Finally, now with the data properly treated, we use the following function to fit the training data using a `RandomForestClassifier` with optimized hyperparameters obtained using `GridSearchCV`. The range of hyperparameters is:
 ```
 n_estimators = list(range(20,220,10))
 max_depth = list(range(2, 22, 2)) + [None]
+```
 
+The following function does the following:
+- Defines target and predictors
+- Performs a train-test split of the data
+- Uses `GridSearchCV` which performs an "exhaustive search over specified parameter values for an estimator" (see the docs). It searches the hyperparameter space to find the highest cross validation score. It has several important arguments namely:
+
+| Argument | Description |
+| --- | ---|
+| **`estimator`** | Sklearn instance of the model to fit on |
+| **`param_grid`** | A dictionary where keys are hyperparameters and values are lists of values to test |
+| **`cv`** | Number of internal cross-validation folds to run for each set of hyperparameters |
+
+```
 def rfscore(df,target_col,test_size,n_estimators,max_depth):
     
     X = df.drop(target_col, axis=1)   # predictors
