@@ -1,10 +1,31 @@
-<img align="right" width="120" height="120"
-     title="Size Limit logo" src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/Reddit-logo.png">
-
 # Predicting Comments on Reddit 
 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+![Image title](https://img.shields.io/badge/reddit--predictor-v1.0-blue.svg) ![image title](https://img.shields.io/badge/python-v3.6-green.svg) ![image title](https://img.shields.io/badge/ntlk-v3.2.5-yellow.svg) ![Image title](https://img.shields.io/badge/sklearn-0.19.1-orange.svg)
+
+<br>
+<br>
+<p align="center">
+  <img src="https://github.com/marcotav/predicting-the-number-of-comments-on-reddit/blob/master/Reddit-logo.png" 
+       width="150" height="150">
+</p>
 <br>
 
+<p align="center">
+  <a href="#ps"> Problem Statement </a> •
+  <a href="#chal"> Challenges and Applications </a> •
+  <a href="#over"> Overview and Data </a> •
+  <a href="#orgdata"> Preprocessing the data </a> •
+  <a href="#Small datasets"> Problems with small datasets </a> •
+  <a href="#InceptionV3"> Creating and training using the InceptionV3 model </a> •
+  <a href="#trainfully"> Training the fully-connected network</a> •
+  <a href="#plots"> Plotting the accuracy and loss histories </a> •
+  <a href="#Conclusions">Conclusions</a> •
+  <a href="#td">To Dos</a> 
+</p>
+
+<a id = 'ps'></a>
 ## Problem Statement
 
 Determine which characteristics of a post on Reddit contribute most to the overall interaction as measured by number of comments.
