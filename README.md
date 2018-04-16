@@ -213,32 +213,61 @@ The following function does the following:
 - Defines target and predictors
 - Performs a train-test split of the data
 - Uses `GridSearchCV` which performs an "exhaustive search over specified parameter values for an estimator" (see the docs). It searches the hyperparameter space to find the highest cross validation score. It has several important arguments namely:
-
 | Argument | Description |
 | --- | ---|
 | **`estimator`** | Sklearn instance of the model to fit on |
 | **`param_grid`** | A dictionary where keys are hyperparameters and values are lists of values to test |
 | **`cv`** | Number of internal cross-validation folds to run for each set of hyperparameters |
-
+- After fitting, `GridSearchCV` provides information such as:
+| Property | Use |
+| --- | ---|
+| **`results.param_grid`** | Parameters searched over. |
+| **`results.best_score_`** | Best mean cross-validated score.|
+| **`results.best_estimator_`** | Reference to model with best score. |
+| **`results.best_params_`** | Parameters found to perform with the best score. |
+| **`results.grid_scores_`** | Display score attributes with corresponding parameters. | 
+- The estimator chosen here was a `RandomForestClassifier`. The latter fits a set of decision tree classifiers on sub-samples of the data, averaging to improve the accuracy and avoid over-fitting. 
+- Fits several models using the training data, for all parameters within the parameter grid `rf_params` and find the best model i.e. the model with best mean cross-validated score.
+- Instantiates the best model and fits it
+- Scores the model and makes predictions
+- Determines the most relevant features and prints out a bar plot showing them.
 ```
 def rfscore(df,target_col,test_size,n_estimators,max_depth):
     
     X = df.drop(target_col, axis=1)   # predictors
     y = df[target_col]                # target
     
+    # train-test split
     X_train, X_test, y_train, y_test = train_test_split(X, 
-                                                        y, test_size = test_size, random_state=42) # TT split
+                                                        y, test_size = test_size, random_state=42)
+    # definition of a grid of parameter values
     rf_params = {
              'n_estimators':n_estimators,
              'max_depth':max_depth}   # parameters for grid search
+             
+    # Instantiation       
     rf_gs = GridSearchCV(RandomForestClassifier(), rf_params, cv=5, verbose=1, n_jobs=-1)
-    rf_gs.fit(X_train,y_train) # training the random forest with all possible parameters
+    
+    # fitting using training data with all possible parameters
+    rf_gs.fit(X_train,y_train) 
+    
+    # Parameters that have been found to perform with the best score
     max_depth_best = rf_gs.best_params_['max_depth']      
     n_estimators_best = rf_gs.best_params_['n_estimators'] 
+    
+    # Best model
     best_rf_gs = RandomForestClassifier(max_depth=max_depth_best,n_estimators=n_estimators_best) 
+    
+    # fitting best model using training data with all possible parameters
     best_rf_gs.fit(X_train,y_train)  
+    
+    # scoring
     best_rf_score = best_rf_gs.score(X_test,y_test) 
+    
+    # predictions
     preds = best_rf_gs.predict(X_test)
+    
+    # finds the most important features and plots a bar chart
     feature_importances = pd.Series(best_rf_gs.feature_importances_, index=X.columns).sort_values().tail(5)
     print(feature_importances.plot(kind="barh", figsize=(6,6)))
     return 
